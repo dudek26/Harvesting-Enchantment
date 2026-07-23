@@ -20,10 +20,6 @@ java {
     withJavadocJar()
 }
 
-machete {
-    enabled = buildNumber != null || isRelease
-}
-
 tasks.withType(Jar).configureEach {
     from(rootProject.file('LICENSE')) {
         rename { "${it}_${mod_name}" }
