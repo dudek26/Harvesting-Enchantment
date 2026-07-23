@@ -1,4 +1,4 @@
-package eu.dudko.harvesting_enchantment.data;
+package eu.dudko.harvesting_enchantment.neoforge.data;
 
 import eu.dudko.harvesting_enchantment.HarvestingEnchantment;
 import eu.dudko.harvesting_enchantment.registry.HEItemTags;

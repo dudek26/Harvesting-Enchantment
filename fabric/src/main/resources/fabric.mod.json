@@ -16,7 +16,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "eu.dudko.harvesting_enchantment.HarvestingEnchantmentFabric"
+      "eu.dudko.harvesting_enchantment.fabric.HarvestingEnchantmentFabric"
     ],
     "fabric-datagen": [
       "eu.dudko.harvesting_enchantment.HarvestingEnchantmentDatagen"

@@ -1,9 +1,7 @@
-package eu.dudko.harvesting_enchantment;
+package eu.dudko.harvesting_enchantment.neoforge;
 
-import eu.dudko.harvesting_enchantment.data.HEBlockTagsProvider;
-import eu.dudko.harvesting_enchantment.data.HEEnchantments;
-import eu.dudko.harvesting_enchantment.data.HEItemTagsProvider;
-import eu.dudko.harvesting_enchantment.platform.NeoForgeRegistrationHelper;
+import eu.dudko.harvesting_enchantment.HarvestingEnchantment;
+import eu.dudko.harvesting_enchantment.neoforge.data.*;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.bus.api.IEventBus;
@@ -18,15 +16,18 @@ public class HarvestingEnchantmentNeoForge {
 
     public HarvestingEnchantmentNeoForge(IEventBus eventBus) {
         HarvestingEnchantment.init();
-        NeoForgeRegistrationHelper.init(eventBus);
     }
 
     @SubscribeEvent
     public static void gatherData(GatherDataEvent.Client event) {
         event.createProvider(HEBlockTagsProvider::new);
         event.createProvider(HEItemTagsProvider::new);
+        event.createProvider(HEEnchantmentTagsProvider::new);
 
         event.createDatapackRegistryObjects(new RegistrySetBuilder().add(Registries.ENCHANTMENT,
-                HEEnchantments::bootstrap));
+                HEEnchantmentsBootstrap::bootstrap));
+
+        event.createProvider(HEEnglishLangProvider::new);
+        event.createProvider(HEPolishLangProvider::new);
     }
 }

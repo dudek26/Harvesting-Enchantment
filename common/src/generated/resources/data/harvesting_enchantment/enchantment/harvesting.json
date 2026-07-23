@@ -4,9 +4,6 @@
     "fallback": "Harvesting",
     "translate": "enchantment.harvesting_enchantment.harvesting.name"
   },
-  "effects": {
-    "harvesting_enchantment:harvest_crops": {}
-  },
   "max_cost": {
     "base": 65,
     "per_level_above_first": 0
