@@ -3,14 +3,25 @@ plugins {
     id 'maven-publish'
 }
 
+Boolean isRelease = System.getenv("RELEASE_BUILD")?.toBoolean() ?: false
+
+// Formats the mod version to include the loader and Minecraft version
+// examples: 1.0.0+fabric-mc26.1, 1.1.0+neoforge-mc26.2-b.21
+String buildNumber = System.getenv("GITHUB_RUN_NUMBER")
+version = "${version}+${project.name}-mc${minecraft_version}" + (buildNumber != null && !isRelease ? "-b.${buildNumber}" : "")
+
 base {
-    archivesName = "${mod_id}-${project.name}-${minecraft_version}"
+    archivesName = "${mod_id}"
 }
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(java_version)
     withSourcesJar()
     withJavadocJar()
+}
+
+machete {
+    enabled = buildNumber != null || isRelease
 }
 
 tasks.withType(Jar).configureEach {
