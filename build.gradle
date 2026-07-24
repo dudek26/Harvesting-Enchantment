@@ -42,29 +42,15 @@ publishMods {
         environment = SERVER_ONLY_CLIENT_OPTIONAL
     }
 
-    github("github") {
+    github {
         accessToken = providers.environmentVariable("GITHUB_TOKEN")
         repository = "dudek26/Harvesting-Enchantment"
         commitish = providers.environmentVariable("BRANCH_NAME")
         tagName = "mc${minecraft_version}/v${mod_version}"
 
         allowEmptyFiles = true
-    }
 
-    github("githubFabric") {
-        accessToken = providers.environmentVariable("GITHUB_TOKEN")
-        parent tasks.named("publishGithub")
-        file project(":fabric")
-
-        dryRun = !(githubRelease && fabricRelease)
-    }
-
-    github("githubNeoforge") {
-        accessToken = providers.environmentVariable("GITHUB_TOKEN")
-        parent tasks.named("publishGithub")
-        file project(":neoforge")
-
-        dryRun = !(githubRelease && neoforgeRelease)
+        dryRun = !githubRelease
     }
 
     curseforge("curseforgeFabric") {
