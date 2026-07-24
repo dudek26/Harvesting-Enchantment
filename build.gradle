@@ -10,6 +10,28 @@ plugins {
     id "me.modmuss50.mod-publish-plugin" version "2.1.1"
 }
 
+def platform = providers.environmentVariable("PLATFORM").toString()
+def bothReleases = platform.equalsIgnoreCase('both')
+def fabricRelease = bothReleases || platform.equalsIgnoreCase('fabric')
+def neoforgeRelease = bothReleases || platform.equalsIgnoreCase('neoforge')
+
+def githubRelease = providers.environmentVariable("GITHUB_RELEASE").toString().toBoolean()
+def curseforgeRelease = providers.environmentVariable("CURSEFORGE_RELEASE").toString().toBoolean()
+def modrinthRelease = providers.environmentVariable("MODRINTH_RELEASE").toString().toBoolean()
+
+tasks.register("debugPublishing") {
+    doLast {
+        logger.lifecycle("--- Publishing Debug Info ---")
+        logger.lifecycle("bothReleases: " + bothReleases)
+        logger.lifecycle("fabricRelease: " + fabricRelease)
+        logger.lifecycle("neoforgeRelease: " + neoforgeRelease)
+        logger.lifecycle("githubRelease: " + githubRelease)
+        logger.lifecycle("curseforgeRelease: " + curseforgeRelease)
+        logger.lifecycle("modrinthRelease: " + modrinthRelease)
+        logger.lifecycle("-----------------------------")
+    }
+}
+
 publishMods {
     type = release_type.equalsIgnoreCase("stable") ? STABLE : release_type.equalsIgnoreCase("beta") ? BETA : ALPHA
     changelog = ChangelogText.getChangelogText(rootProject).toString().split(":", 2)[1]
@@ -18,22 +40,7 @@ publishMods {
     def versionString = versions.size() > 1 ? "${versions.first()}-${versions.last()}" : versions.first()
     displayName = "Harvesting Enchantment v${mod_version} for mc${versionString}"
 
-    def platform = providers.environmentVariable("PLATFORM").toString()
-    def bothReleases = platform.equalsIgnoreCase('both')
-    def fabricRelease = bothReleases || platform.equalsIgnoreCase('fabric')
-    def neoforgeRelease = bothReleases || platform.equalsIgnoreCase('neoforge')
-
-    def githubRelease = providers.environmentVariable("GITHUB_RELEASE").toString().toBoolean()
-    def curseforgeRelease = providers.environmentVariable("CURSEFORGE_RELEASE").toString().toBoolean()
-    def modrinthRelease = providers.environmentVariable("MODRINTH_RELEASE").toString().toBoolean()
-
-    logger.info("bothReleases: " + bothReleases)
-    logger.info("fabricRelease: " + fabricRelease)
-    logger.info("neoforgeRelease: " + neoforgeRelease)
-
-    logger.info("githubRelease: " + githubRelease)
-    logger.info("curseforgeRelease: " + curseforgeRelease)
-    logger.info("modrinthRelease: " + modrinthRelease)
+    dryRun = true;
 
     def cfOptions = curseforgeOptions {
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
