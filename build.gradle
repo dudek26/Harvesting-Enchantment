@@ -10,13 +10,6 @@ plugins {
     id "me.modmuss50.mod-publish-plugin" version "2.1.1"
 }
 
-Boolean isRelease = System.getenv("RELEASE_BUILD")?.toBoolean() ?: false
-
-// Formats the mod version to include the loader and Minecraft version
-// examples: 1.0.0+fabric-mc26.1, 1.1.0+neoforge-mc26.2-b.21
-String buildNumber = System.getenv("GITHUB_RUN_NUMBER")
-version = "${mod_version}+${project.name}-mc${minecraft_version}" + (buildNumber != null && !isRelease ? "-b.${buildNumber}" : "")
-
 def platform = providers.environmentVariable("PLATFORM").getOrNull()
 def bothReleases = platform?.equalsIgnoreCase('both')
 def fabricRelease = bothReleases || platform?.equalsIgnoreCase('fabric')
@@ -45,6 +38,8 @@ publishMods {
     def versions = publishing_version_list.split(", ")
     def versionString = versions.size() > 1 ? "${versions.first()}-${versions.last()}" : versions.first()
     displayName = "Harvesting Enchantment v${mod_version} for mc${versionString}"
+    def fabricVersion = "${mod_version}+fabric-mc${minecraft_version}"
+    def neoforgeVersion = "${mod_version}+neoforge-mc${minecraft_version}"
 
     def cfOptions = curseforgeOptions {
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
@@ -67,6 +62,7 @@ publishMods {
         repository = "dudek26/Harvesting-Enchantment"
         commitish = providers.environmentVariable("BRANCH_NAME")
         tagName = "mc${minecraft_version}/v${mod_version}"
+        version = "${mod_version}+mc${minecraft_version}"
 
         allowEmptyFiles = true
     }
@@ -79,7 +75,7 @@ publishMods {
         dryRun = !(githubRelease && fabricRelease)
     }
 
-    github("githubNeoforge") {
+    github("githubNeoForge") {
         accessToken = providers.environmentVariable("GITHUB_TOKEN")
         parent tasks.named("publishGithub")
         file project(":neoforge")
@@ -94,6 +90,7 @@ publishMods {
         requires {
             slug = "fabric-api"
         }
+        version = fabricVersion
 
         dryRun = !(curseforgeRelease && fabricRelease)
     }
@@ -102,6 +99,7 @@ publishMods {
         from cfOptions
         file project(":neoforge")
         modLoaders.add("neoforge")
+        version = neoforgeVersion
 
         dryRun = !(curseforgeRelease && neoforgeRelease)
     }
@@ -113,6 +111,7 @@ publishMods {
         requires {
             slug = "fabric-api"
         }
+        version = fabricVersion
 
         dryRun = !(modrinthRelease && fabricRelease)
     }
@@ -121,6 +120,7 @@ publishMods {
         from mrOptions
         file project(":neoforge")
         modLoaders.add("neoforge")
+        version = neoforgeVersion
 
         dryRun = !(modrinthRelease && neoforgeRelease)
     }
