@@ -10,6 +10,13 @@ plugins {
     id "me.modmuss50.mod-publish-plugin" version "2.1.1"
 }
 
+Boolean isRelease = System.getenv("RELEASE_BUILD")?.toBoolean() ?: false
+
+// Formats the mod version to include the loader and Minecraft version
+// examples: 1.0.0+fabric-mc26.1, 1.1.0+neoforge-mc26.2-b.21
+String buildNumber = System.getenv("GITHUB_RUN_NUMBER")
+version = "${mod_version}+${project.name}-mc${minecraft_version}" + (buildNumber != null && !isRelease ? "-b.${buildNumber}" : "")
+
 def platform = providers.environmentVariable("PLATFORM").getOrNull()
 def bothReleases = platform?.equalsIgnoreCase('both')
 def fabricRelease = bothReleases || platform?.equalsIgnoreCase('fabric')
@@ -35,7 +42,6 @@ tasks.register("debugPublishing") {
 publishMods {
     type = release_type.equalsIgnoreCase("stable") ? STABLE : release_type.equalsIgnoreCase("beta") ? BETA : ALPHA
     changelog = ChangelogText.getChangelogText(rootProject).toString().split(":", 2)[1]
-    version = rootProject.version
     def versions = publishing_version_list.split(", ")
     def versionString = versions.size() > 1 ? "${versions.first()}-${versions.last()}" : versions.first()
     displayName = "Harvesting Enchantment v${mod_version} for mc${versionString}"
