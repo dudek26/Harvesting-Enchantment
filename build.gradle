@@ -10,14 +10,14 @@ plugins {
     id "me.modmuss50.mod-publish-plugin" version "2.1.1"
 }
 
-def platform = providers.environmentVariable("PLATFORM").toString()
+def platform = providers.environmentVariable("PLATFORM").getOrNull()
 def bothReleases = platform.equalsIgnoreCase('both')
 def fabricRelease = bothReleases || platform.equalsIgnoreCase('fabric')
 def neoforgeRelease = bothReleases || platform.equalsIgnoreCase('neoforge')
 
-def githubRelease = providers.environmentVariable("GITHUB_RELEASE").toString().toBoolean()
-def curseforgeRelease = providers.environmentVariable("CURSEFORGE_RELEASE").toString().toBoolean()
-def modrinthRelease = providers.environmentVariable("MODRINTH_RELEASE").toString().toBoolean()
+def githubRelease = providers.environmentVariable("GITHUB_RELEASE").getOrElse("false").toBoolean()
+def curseforgeRelease = providers.environmentVariable("CURSEFORGE_RELEASE").getOrElse("false").toBoolean()
+def modrinthRelease = providers.environmentVariable("MODRINTH_RELEASE").getOrElse("false").toBoolean()
 
 tasks.register("debugPublishing") {
     doLast {
