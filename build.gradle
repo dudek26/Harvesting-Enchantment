@@ -19,12 +19,21 @@ publishMods {
     displayName = "Harvesting Enchantment v${mod_version} for mc${versionString}"
 
     def platform = providers.environmentVariable("PLATFORM").toString()
-    def fabricRelease = platform == 'fabric' || platform == 'both'
-    def neoforgeRelease = platform == 'neoforge' || platform == 'both'
+    def bothReleases = platform.equalsIgnoreCase('both')
+    def fabricRelease = bothReleases || platform.equalsIgnoreCase('fabric')
+    def neoforgeRelease = bothReleases || platform.equalsIgnoreCase('neoforge')
 
     def githubRelease = providers.environmentVariable("GITHUB_RELEASE").toString().toBoolean()
     def curseforgeRelease = providers.environmentVariable("CURSEFORGE_RELEASE").toString().toBoolean()
     def modrinthRelease = providers.environmentVariable("MODRINTH_RELEASE").toString().toBoolean()
+
+    logger.info("bothReleases: " + bothReleases)
+    logger.info("fabricRelease: " + fabricRelease)
+    logger.info("neoforgeRelease: " + neoforgeRelease)
+
+    logger.info("githubRelease: " + githubRelease)
+    logger.info("curseforgeRelease: " + curseforgeRelease)
+    logger.info("modrinthRelease: " + modrinthRelease)
 
     def cfOptions = curseforgeOptions {
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
