@@ -1,0 +1,55 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        type: choice
+        description: Platform
+        options:
+          - both
+          - fabric
+          - neoforge
+      modrinth:
+        type: boolean
+        default: true
+        description: Modrinth
+      curseforge:
+        type: boolean
+        default: true
+        description: CurseForge
+      github_releases:
+        type: boolean
+        default: true
+        description: GitHub Releases
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v6
+      - name: validate gradle wrapper
+        uses: gradle/actions/wrapper-validation@v6
+      - name: setup jdk
+        uses: actions/setup-java@v5
+        with:
+          java-version: '25'
+          distribution: 'microsoft'
+      - name: make gradle wrapper executable
+        run: chmod +x ./gradlew
+      - uses: actions/checkout@v4
+      - name: build & publish
+        run: ./gradlew build publishMods
+        env:
+          CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+          RELEASE_BUILD: true
+          MODRINTH_RELEASE: ${{ inputs.modrinth }}
+          CURSEFORGE_RELEASE: ${{ inputs.curseforge }}
+          GITHUB_RELEASE: ${{ inputs.github_releases }}
+          PLATFORM: ${{ inputs.platform }}

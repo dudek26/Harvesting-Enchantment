@@ -1,6 +1,108 @@
+import dev.ithundxr.silk.ChangelogText
+
 plugins {
     // see https://maven.fabricmc.net/fabric-loom/fabric-loom.gradle.plugin/maven-metadata.xml for new versions
     id 'net.fabricmc.fabric-loom' version '1.16.3' apply false
     // see https://projects.neoforged.net/neoforged/moddevgradle for new versions
     id 'net.neoforged.moddev' version '2.0.141' apply false
+
+    id "dev.ithundxr.silk" version "0.11.16"
+    id "me.modmuss50.mod-publish-plugin" version "2.1.1"
+}
+
+publishMods {
+    type = release_type.equalsIgnoreCase("stable") ? STABLE : release_type.equalsIgnoreCase("beta") ? BETA : ALPHA
+    changelog = ChangelogText.getChangelogText(rootProject).toString().split(":", 2)[1]
+    version = mod_version
+    def versions = publishing_version_list.split(", ")
+    def versionString = versions.size() > 1 ? "${versions.first()}-${versions.last()}" : versions.first()
+    displayName = "Harvesting Enchantment v${mod_version} for mc${versionString}"
+
+    def platform = providers.environmentVariable("PLATFORM").toString()
+    def fabricRelease = platform == 'fabric' || platform == 'both'
+    def neoforgeRelease = platform == 'neoforge' || platform == 'both'
+
+    def githubRelease = providers.environmentVariable("GITHUB_RELEASE").toString() == "true"
+    def curseforgeRelease = providers.environmentVariable("CURSEFORGE_RELEASE").toString() == "true"
+    def modrinthRelease = providers.environmentVariable("MODRINTH_RELEASE").toString() == "true"
+
+    def cfOptions = curseforgeOptions {
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        projectId = curseforge_project
+        minecraftVersionList(publishing_version_list)
+        client = true
+        server = true
+    }
+
+    def mrOptions = modrinthOptions {
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        projectId = modrinth_project
+        minecraftVersionList(publishing_version_list)
+
+        environment = SERVER_ONLY_CLIENT_OPTIONAL
+    }
+
+    github("github") {
+        accessToken = providers.environmentVariable("GITHUB_TOKEN")
+        repository = "dudek26/Harvesting-Enchantment"
+        commitish = providers.environmentVariable("BRANCH_NAME")
+        tagName = "mc${minecraft_version}/v${version}"
+
+        allowEmptyFiles = true
+    }
+
+    github("githubFabric") {
+        accessToken = providers.environmentVariable("GITHUB_TOKEN")
+        parent tasks.named("publishGithub")
+        file project(":fabric")
+
+        dryRun = !(githubRelease && fabricRelease)
+    }
+
+    github("githubNeoforge") {
+        accessToken = providers.environmentVariable("GITHUB_TOKEN")
+        parent tasks.named("publishGithub")
+        file project(":neoforge")
+
+        dryRun = !(githubRelease && neoforgeRelease)
+    }
+
+    curseforge("curseforgeFabric") {
+        from cfOptions
+        file project(":fabric")
+        modLoaders.add("fabric")
+        requires {
+            slug = "fabric-api"
+        }
+
+        dryRun = !(curseforgeRelease && fabricRelease)
+    }
+
+    curseforge("curseforgeNeoForge") {
+        from cfOptions
+        file project(":neoforge")
+        modLoaders.add("neoforge")
+
+        dryRun = !(curseforgeRelease && neoforgeRelease)
+    }
+
+    modrinth("modrinthFabric") {
+        from mrOptions
+        file project(":fabric")
+        modLoaders.add("fabric")
+        requires {
+            slug = "fabric-api"
+        }
+
+        dryRun = !(modrinthRelease && fabricRelease)
+    }
+
+    modrinth("modrinthNeoForge") {
+        from mrOptions
+        file project(":neoforge")
+        modLoaders.add("neoforge")
+
+        dryRun = !(modrinthRelease && neoforgeRelease)
+    }
+
 }
