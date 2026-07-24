@@ -22,9 +22,9 @@ publishMods {
     def fabricRelease = platform == 'fabric' || platform == 'both'
     def neoforgeRelease = platform == 'neoforge' || platform == 'both'
 
-    def githubRelease = providers.environmentVariable("CURSEFORGE_RELEASE").toString().toBoolean()
+    def githubRelease = providers.environmentVariable("GITHUB_RELEASE").toString().toBoolean()
     def curseforgeRelease = providers.environmentVariable("CURSEFORGE_RELEASE").toString().toBoolean()
-    def modrinthRelease = providers.environmentVariable("MODRINTH_RELEASE").toString().toBoolean()
+    def modrinthRelease = providers.environmentVariable("MODRINTH_RELEASE").toString() == "true"
 
     def cfOptions = curseforgeOptions {
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
