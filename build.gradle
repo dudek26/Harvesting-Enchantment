@@ -22,9 +22,9 @@ publishMods {
     def fabricRelease = platform == 'fabric' || platform == 'both'
     def neoforgeRelease = platform == 'neoforge' || platform == 'both'
 
-    def githubRelease = providers.environmentVariable("GITHUB_RELEASE").toString() == "true"
-    def curseforgeRelease = providers.environmentVariable("CURSEFORGE_RELEASE").toString() == "true"
-    def modrinthRelease = providers.environmentVariable("MODRINTH_RELEASE").toString() == "true"
+    def githubRelease = providers.environmentVariable("CURSEFORGE_RELEASE").toString().toBoolean()
+    def curseforgeRelease = providers.environmentVariable("CURSEFORGE_RELEASE").toString().toBoolean()
+    def modrinthRelease = providers.environmentVariable("MODRINTH_RELEASE").toString().toBoolean()
 
     def cfOptions = curseforgeOptions {
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
@@ -42,15 +42,29 @@ publishMods {
         environment = SERVER_ONLY_CLIENT_OPTIONAL
     }
 
-    github {
+    github("github") {
         accessToken = providers.environmentVariable("GITHUB_TOKEN")
         repository = "dudek26/Harvesting-Enchantment"
         commitish = providers.environmentVariable("BRANCH_NAME")
         tagName = "mc${minecraft_version}/v${mod_version}"
 
         allowEmptyFiles = true
+    }
 
-        dryRun = !githubRelease
+    github("githubFabric") {
+        accessToken = providers.environmentVariable("GITHUB_TOKEN")
+        parent tasks.named("publishGithub")
+        file project(":fabric")
+
+        dryRun = !(githubRelease && fabricRelease)
+    }
+
+    github("githubNeoforge") {
+        accessToken = providers.environmentVariable("GITHUB_TOKEN")
+        parent tasks.named("publishGithub")
+        file project(":neoforge")
+
+        dryRun = !(githubRelease && neoforgeRelease)
     }
 
     curseforge("curseforgeFabric") {
