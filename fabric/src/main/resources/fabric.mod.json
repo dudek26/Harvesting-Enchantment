@@ -8,18 +8,15 @@
     "${mod_author}"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "sources": "${source_url}",
+    "issues": "${issues_url}"
   },
   "license": "${license}",
-  "icon": "${mod_id}.png",
+  "icon": "assets/${mod_id}/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
       "eu.dudko.harvesting_enchantment.fabric.HarvestingEnchantmentFabric"
-    ],
-    "fabric-datagen": [
-      "eu.dudko.harvesting_enchantment.HarvestingEnchantmentDatagen"
     ]
   },
   "mixins": [
@@ -29,7 +26,7 @@
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",
     "fabric-api": "*",
-    "minecraft": "~${minecraft_version}",
+    "minecraft": ${fabric_minecraft_version_range},
     "java": ">=${java_version}"
   }
 }

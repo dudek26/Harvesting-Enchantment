@@ -26,4 +26,4 @@ The mod provides the following tags for datapacks:
 
 The mod is compatible with all vanilla crops (Wheat, Carrots, Potatoes, Beetroots) and should be
 compatible with basic modded crops. Please report any incompatibilities
-on [the issues page](https://github.com/dudek26/Harvesting-Enchantment/issues)
+on [the issues page](https://github.com/dudek26/Harvesting-Enchantment/issues).

@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentHolder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -41,6 +42,7 @@ public class Harvesting {
             drops.stream().filter(stack -> stack.is(cropItem)).findFirst().ifPresent(stack -> stack.shrink(1));
             drops.forEach(stack -> Block.popResource(level, pos, stack));
             state.spawnAfterBreak(serverLevel, pos, itemStack, true);
+            serverLevel.playSound(null, pos, state.getSoundType().getBreakSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
         }
         level.setBlock(pos, crop.getStateForAge(0), Block.UPDATE_CLIENTS);
         cir.setReturnValue(InteractionResult.SUCCESS);
