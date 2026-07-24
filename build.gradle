@@ -40,8 +40,6 @@ publishMods {
     def versionString = versions.size() > 1 ? "${versions.first()}-${versions.last()}" : versions.first()
     displayName = "Harvesting Enchantment v${mod_version} for mc${versionString}"
 
-    dryRun = true;
-
     def cfOptions = curseforgeOptions {
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
         projectId = curseforge_project
