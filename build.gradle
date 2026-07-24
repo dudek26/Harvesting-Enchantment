@@ -11,9 +11,9 @@ plugins {
 }
 
 def platform = providers.environmentVariable("PLATFORM").getOrNull()
-def bothReleases = platform.equalsIgnoreCase('both')
-def fabricRelease = bothReleases || platform.equalsIgnoreCase('fabric')
-def neoforgeRelease = bothReleases || platform.equalsIgnoreCase('neoforge')
+def bothReleases = platform?.equalsIgnoreCase('both')
+def fabricRelease = bothReleases || platform?.equalsIgnoreCase('fabric')
+def neoforgeRelease = bothReleases || platform?.equalsIgnoreCase('neoforge')
 
 def githubRelease = providers.environmentVariable("GITHUB_RELEASE").getOrElse("false").toBoolean()
 def curseforgeRelease = providers.environmentVariable("CURSEFORGE_RELEASE").getOrElse("false").toBoolean()
@@ -35,7 +35,7 @@ tasks.register("debugPublishing") {
 publishMods {
     type = release_type.equalsIgnoreCase("stable") ? STABLE : release_type.equalsIgnoreCase("beta") ? BETA : ALPHA
     changelog = ChangelogText.getChangelogText(rootProject).toString().split(":", 2)[1]
-    version = mod_version
+    version = rootProject.version
     def versions = publishing_version_list.split(", ")
     def versionString = versions.size() > 1 ? "${versions.first()}-${versions.last()}" : versions.first()
     displayName = "Harvesting Enchantment v${mod_version} for mc${versionString}"
